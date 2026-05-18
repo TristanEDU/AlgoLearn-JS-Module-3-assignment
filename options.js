@@ -4,7 +4,6 @@ const rl = readline.createInterface({
   output: process.stdout,
 });
 
-const chalk = require("chalk");
 const ROCK = "rock";
 const PAPER = "paper";
 const SCISSORS = "scissors";
@@ -14,142 +13,91 @@ const choiceMap = {
   2: { name: PAPER, value: 1 },
   3: { name: SCISSORS, value: 2 },
 };
-const border = chalk.cyan;
-const logo = chalk.bold.red;
-const header = chalk.bold.cyanBright;
-const success = chalk.green;
-const menuNum = chalk.bold.yellow;
-const exit = chalk.bold.red;
-const status = chalk.bold.greenBright;
-const muted = chalk.italic.gray;
 
-const greeting = `
-${border("┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓")}
-${border("┃")}                                                      ${border("┃")}
-${border("┃")}   ${logo("██████╗ ██████╗ ███████╗")}                           ${border("┃")}
-${border("┃")}   ${logo("██╔══██╗██╔══██╗██╔════╝")}                           ${border("┃")}
-${border("┃")}   ${logo("██████╔╝██████╔╝███████╗")}                           ${border("┃")}
-${border("┃")}   ${logo("██╔══██╗██╔═══╝ ╚════██║")}                           ${border("┃")}
-${border("┃")}   ${logo("██║  ██║██║     ███████║")}                           ${border("┃")}
-${border("┃")}   ${logo("╚═╝  ╚═╝╚═╝     ╚══════╝")}                           ${border("┃")}
-${border("┃")}                                                      ${border("┃")}
-${border("┃")}         ${header("ROCK • PAPER • SCISSORS PROTOCOL")}             ${border("┃")}
-${border("┃")}                 ${chalk.gray("Terminal Edition v1.0")}                ${border("┃")}
-${border("┃")}                                                      ${border("┃")}
-${border("┣━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┫")}
-${border("┃")} ${header("SYSTEM BOOT SEQUENCE")}                                 ${border("┃")}
-${border("┃")} ${chalk.gray("────────────────────────────────────────────────────")} ${border("┃")}
-${border("┃")} ${success("[✓] Core engine loaded")}                               ${border("┃")}
-${border("┃")} ${success("[✓] Input controls mapped")}                            ${border("┃")}
-${border("┃")} ${success("[✓] Opponent AI initialized")}                          ${border("┃")}
-${border("┃")} ${success("[✓] Combat rules verified")}                            ${border("┃")}
-${border("┃")} ${success("[✓] Session ready")}                                    ${border("┃")}
-${border("┃")}                                                      ${border("┃")}
-${border("┣━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┫")}
-${border("┃")} ${header("SELECT YOUR ACTION")}                                   ${border("┃")}
-${border("┃")}                                                      ${border("┃")}
-${border("┃")}   ${menuNum("[1]")} ✊  ${chalk.white("ROCK")}                                       ${border("┃")}
-${border("┃")}   ${menuNum("[2]")} 📄  ${chalk.white("PAPER")}                                      ${border("┃")}
-${border("┃")}   ${menuNum("[3]")} ✂️  ${chalk.white("SCISSORS")}                                   ${border("┃")}
-${border("┃")}                                                      ${border("┃")}
-${border("┃")}   ${exit("[0]")} ⏻  ${exit("TERMINATE SESSION")}                           ${border("┃")}
-${border("┃")}                                                      ${border("┃")}
-${border("┣━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┫")}
-${border("┃")} ${status("STATUS: Awaiting player input...")}                     ${border("┃")}
-${border("┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛")}
-`;
-
-const mainMenu = function () {
-  console.log(`
-    ============================
-    |      MAIN NAVIGATION     |
-    |--------------------------|
-    |  1. Start Game           |
-    |  0. Exit Program         |
-    ============================    
-        `);
+const state = {
+  // Game state is stored in one object so the menu/UI modules can share it.
+  userWeapon: null,
+  compWeapon: 0,
+  results: "",
+  userWin: 0,
+  compWin: 0,
+  ties: 0,
 };
 
-const gameOptions = function () {
-  console.log(
-    `
-    ============================
-    |          Options         |
-    |--------------------------|
-    |  1. Rock                 |
-    |  2. Paper                | 
-    |  3. Scissors             |
-    |  0. Exit Program         |
-    ============================ 
-        `,
-  );
+const randomNum = () => {
+  state.compWeapon = Math.floor(Math.random() * 3);
 };
-
-let userWeapon = null;
-
-const randomNum = Math.floor(Math.random() * 3);
-
-let compWeapon = randomNum;
-
-const welcome = rl.question(greeting, (choice) => {
-  userWeapon = Number(choiceMap[choice].value);
-  console.log(`You picked ${choiceMap[choice].name}`);
-  console.log(
-    `User Choice: ${userWeapon}, Type of User value: ${typeof userWeapon}`,
-  );
-  gameLogic();
-});
 
 const gameLogic = () => {
-  console.log(`User weapon: ${userWeapon}, Comp Weapon: ${compWeapon}`);
-  if (userWeapon === compWeapon) {
-    console.log(`Tie try again`);
-    rl.close();
-  } else if ((userWeapon - compWeapon + 3) % 3 === 1) {
-    console.log(`user wins!`);
-    rl.close();
+  if (state.userWeapon === state.compWeapon) {
+    state.results = `It's a Tie!`;
+    state.ties = state.ties + 1;
+  } else if ((state.userWeapon - state.compWeapon + 3) % 3 === 1) {
+    state.results = `You Won!`;
+    state.userWin = state.userWin + 1;
   } else {
-    console.log(`comp wins`);
+    state.results = `Loser, The computer beat you...`;
+    state.compWin = state.compWin + 1;
+  }
+};
+
+const startExitLogic = (choice, func) => {
+  if (choice === "1") {
+    randomNum();
+    func();
+  } else {
     rl.close();
   }
 };
 
 rl.on("close", () => {
-  console.log(`
-${border("┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓")}
-${border("┃")} ${exit("TERMINATING SESSION...")}                       ${border("┃")}
-${border("┃")}                                              ${border("┃")}
-${border("┃")} ${muted("Saving combat records...")}                     ${border("┃")}
-${border("┃")} ${muted("Disconnecting opponent AI...")}                 ${border("┃")}
-${border("┃")} ${success("Session closed successfully.")}                 ${border("┃")}
-${border("┃")}                                              ${border("┃")}
-${border("┃")} ${chalk.cyan("Thanks for playing, Commander.")}               ${border("┃")}
-${border("┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛")}
-`);
+  const { exitScreen } = require("./ui.js");
+  console.clear();
+  console.log(exitScreen);
   process.exit(0);
 });
 
 module.exports = {
   rl,
-  chalk,
   ROCK,
   PAPER,
   SCISSORS,
   choiceMap,
-  border,
-  logo,
-  header,
-  success,
-  menuNum,
-  exit,
-  status,
-  muted,
-  greeting,
-  mainMenu,
-  gameOptions,
-  userWeapon,
   randomNum,
-  compWeapon,
+  get userWeapon() {
+    return state.userWeapon;
+  },
+  set userWeapon(value) {
+    state.userWeapon = value;
+  },
+  get compWeapon() {
+    return state.compWeapon;
+  },
+  set compWeapon(value) {
+    state.compWeapon = value;
+  },
+  get results() {
+    return state.results;
+  },
+  get userWin() {
+    return state.userWin;
+  },
+  set userWin(value) {
+    state.userWin = value;
+  },
+  get compWin() {
+    return state.compWin;
+  },
+  set compWin(value) {
+    state.compWin = value;
+  },
+  get ties() {
+    return state.ties;
+  },
+  set ties(value) {
+    state.ties = value;
+  },
+
   gameLogic,
-  // goodby,
+  startExitLogic,
 };

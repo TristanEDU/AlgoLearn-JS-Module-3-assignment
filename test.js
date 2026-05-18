@@ -8,7 +8,7 @@ console.log(
   `this is a test of the reverse function:\n${utils.reverse("this is a test of the reverse function:")}`,
 );
 
-console.log(`This is a test of the random number function: ${utils.randomNum}`);
+console.log(`This is a test of the random number function: ${utils.randomNum()}`);
 
 console.log(`This is a test of the add function: ${utils.add(1, 3)}`);
 

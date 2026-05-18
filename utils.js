@@ -1,4 +1,5 @@
 const capitalize = function (str) {
+  // Keep the implementation simple and explicit for Module 3 requirements.
   return str
     .split("")
     .map((char, index) => (index === 0 ? char.toUpperCase() : char))
@@ -9,7 +10,10 @@ const reverse = function (str) {
   return str.split("").reverse("").join("");
 };
 
-const randomNum = Math.random();
+// Returns a new random number each time the function is called.
+const randomNum = function () {
+  return Math.random();
+};
 
 const add = (a, b) => a + b;
 const subtract = (a, b) => a - b;

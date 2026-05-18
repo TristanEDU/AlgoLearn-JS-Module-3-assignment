@@ -1,15 +1,34 @@
 const options = require("./options.js");
-const questions = require("./questions.js");
+const ui = require("./ui.js");
 
-options.rl;
+console.clear();
+console.log(ui.sysBanner());
+console.log(ui.bootSyc);
 
-console.log(
-  `User Choice: ${options.userWeapon}, Type of User value: ${typeof options.userWeapon}`,
-);
-console.log(
-  `Comp Choice: ${options.compWeapon}, Type of Comp value: ${typeof options.compWeapon}`,
-);
+setTimeout(() => {
+  console.clear();
+  console.log(ui.sysBanner());
+  options.rl.question(ui.mainMenuInit, (choice) => {
+    options.startExitLogic(choice, gamePlay);
+  });
+}, 1000);
 
-questions.welcome;
+function gamePlay() {
+  console.clear();
+  console.log(ui.sysBanner());
 
-// options.gameLogic;
+  options.rl.question(ui.gameOptions, (choice) => {
+    if (choice === "0") {
+      options.rl.close();
+    } else {
+      options.userWeapon = Number(options.choiceMap[choice].value);
+      options.gameLogic();
+      console.clear();
+      console.log(ui.sysBanner());
+      console.log(ui.results());
+      options.rl.question(ui.playAgain, (choice) => {
+        options.startExitLogic(choice, gamePlay);
+      });
+    }
+  });
+}
