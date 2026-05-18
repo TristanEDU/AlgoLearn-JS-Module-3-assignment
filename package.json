@@ -1,0 +1,9 @@
+{
+  "name": "algolearn-js-module-3-assignment",
+  "version": "1.0.0",
+  "main": "rps.js",
+  "type": "commonjs",
+  "dependencies": {
+    "chalk": "^4.1.2"
+  }
+}
