@@ -83,4 +83,3 @@ npm install
 
 - This project uses CommonJS throughout for compatibility with the assignment scope.
 - The terminal UI is intentionally styled to make the game feel more polished while still staying within simple Node.js concepts.
-- If you want to extend the project, a good next step would be adding input validation or supporting multiple matches in a row without returning to the main menu.
